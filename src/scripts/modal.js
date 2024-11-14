@@ -1,19 +1,24 @@
-
-const nameInput =  document.querySelector('.popup__input_type_card-name')
+const nameInput =  document.querySelector('.popup__input_type_name')
 const jobInput = document.querySelector('.popup__input_type_description')
+const profileTitle = document.querySelector('.profile__title')
+const profileDescription = document.querySelector('.profile__description')
 
 export function openModal(popupSelector, src, alt) {
     const popup = document.querySelector(popupSelector);
     if (popup) {
         if (popup.classList.contains('popup_type_image')) {
             let popupImage = popup.querySelector('.popup__image')
-            
+            popup.querySelector('.popup__caption').textContent = alt
             popupImage.src = src;
             popupImage.alt = alt;
         }
+        if (popup.querySelector('[name="edit-profile"]')) {
+            nameInput.value = profileTitle.textContent;
+            jobInput.value = profileDescription.textContent;
+        }
 
         popup.classList.add('popup_is-opened');
-        setTimeout( () => { popup.classList.add('popup_is-animated')}, 0) ;
+        popup.classList.add('popup_is-animated')
 
         const onEscKeyPress = (event) => {
             if (event.key === 'Escape') {
@@ -33,6 +38,8 @@ export function closeModal(popupSelector) {
     if (popup) {
         popup.classList.remove('popup_is-opened');
         popup.classList.add('popup_is-animated')
+        if (popup.querySelector('form'))
+            popup.querySelector('form').reset()
 
     } else {
         console.error(`Popup с селектором "${popupSelector}" не найден.`);
@@ -48,29 +55,11 @@ document.addEventListener('click', (event) => {
 export function handleProfileEdit(evt) {
     evt.preventDefault();
 
-    const jobInputValue = document.querySelector('.popup__input_type_description').value;
-    const nameInputValue = document.querySelector('.popup__input_type_name').value;
 
-    const profileTitle = document.querySelector('.profile__title')
-    const profileDescription = document.querySelector('.profile__description')
+    profileTitle.textContent = nameInput.value;
+    profileDescription.textContent = jobInput.value;
 
-    profileTitle.textContent = nameInputValue;
-    profileDescription.textContent = jobInputValue;
-
-    jobInput.textContent = jobInputValue;
-    nameInput.textContent = nameInputValue;
-
+    jobInput.textContent = jobInput.value;
+    nameInput.textContent = nameInput.value;
 }
-
-export function handleCardAdd(evt) {
-    evt.preventDefault();
-
-    const cardNameValue = document.querySelector('.popup__input_type_card-name').value;
-    const cardSrcValue = document.querySelector('.popup__input_type_url').value;
-
-    return({name: cardNameValue, src: cardSrcValue});
-}
-
-
-
 
