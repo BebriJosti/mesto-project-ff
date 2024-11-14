@@ -1,3 +1,5 @@
+import {openModal} from "./modal";
+
 const shmyakLook = new URL("https://sun9-51.userapi.com/impg/haxjW5n4gNhRTJoapYfikaW1_0O8K8JMymJ2jg/a7ud6i_1nlU.jpg?size=1280x720&quality=95&sign=86f49bff0632d96a7110d198cd590b84&type=album", import.meta.url);
 const shmyakLay = new URL("https://sun9-51.userapi.com/impg/rxSY5cf5_8SLEQ7jd7fWDwHGK9_1ERyZ-KRrUg/e856HzFf0oc.jpg?size=1280x720&quality=95&sign=65b81c74b619ddbf1d65960be27108fe&type=album", import.meta.url);
 const shmyakHints = new URL("https://sun9-1.userapi.com/impg/GFq3Hsjt9FxNTyrYtywMtGKlu_ySxlsO6XAHUQ/2nUZ3lXBKiA.jpg?size=1280x720&quality=95&sign=704c87ddc320aca36c72f1c3f26d5fbd&type=album", import.meta.url)
@@ -35,14 +37,18 @@ export function createCard(name, link, isLiked) {
   cardElement.querySelector('.card__image').alt = name;
 
   const deleteButton = cardElement.querySelector(".card__delete-button");
+  const imagePopup = cardElement.querySelector(".card__image")
+
   deleteButton.addEventListener("click", removeCard);
   likeButton.addEventListener('click',() => handleCardLike(likeButton));
+  imagePopup.addEventListener('click', (event) =>
+      openModal(".popup_type_image", event.target.currentSrc, event.target.alt))
 
   cardsContainer.prepend(cardElement);
 }
 
 initialCards.forEach((element) => {
-    const card = createCard(element.name, element.link);
+    createCard(element.name, element.link);
 })
 
 
