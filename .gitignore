@@ -1,6 +1,7 @@
 .idea/
 .vscode/
-nodemodules/
+node_modules/
+dist
 build
 .DSStore
 .tgz

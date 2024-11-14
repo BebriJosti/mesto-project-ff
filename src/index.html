@@ -8,22 +8,21 @@
     />
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
     <title>Mesto</title>
-    <link rel="stylesheet" href="./pages/index.css" />
   </head>
   <body class="page">
     <div class="page__content">
       <header class="header page__section">
         <img
-          src="./images/logo.svg"
-          alt="Логотип проекта масто"
+          src="<%=require('./images/logo.svg')%>"
+          alt="Логотип проекта место"
           class="logo header__logo"
         />
       </header>
       <main class="content">
         <section class="profile page__section">
           <div
-            class="profile__image"
-            style="background-image: url('./images/avatar.jpg')"
+                  class="profile__image"
+                  style="background-image: url('<%= require('./images/avatar.jpg') %>')"
           ></div>
           <div class="profile__info">
             <h1 class="profile__title">Аътём</h1>
@@ -37,7 +36,7 @@
         </section>
       </main>
       <footer class="footer page__section">
-        <p class="footer__copyright">© 2021 Mesto Russia</p>
+        <p class="footer__copyright">© 2024 Mesto Russia</p>
       </footer>
       <div class="popup popup_type_edit">
         <div class="popup__content">
@@ -97,8 +96,6 @@
         </div>
       </div>
     </div>
-    <script src="./scripts/cards.js"></script>
-    <script src="./scripts/index.js" defer></script>
 
     <template id="card-template">
       <li class="places__item card">
@@ -111,4 +108,9 @@
       </li>
     </template>
   </body>
+
+
+
+
 </html>
+
