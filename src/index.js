@@ -12,6 +12,7 @@ const closeButtonProfile = document.querySelector(".popup_type_edit")
     .querySelector(".popup__close")
 const imagePopupCloseButton = document.querySelector(".popup_type_image")
     .querySelector(".popup__close")
+const cardsContainer = document.querySelector(".places__list");
 
 const shmyakLook = new URL("https://sun9-51.userapi.com/impg/haxjW5n4gNhRTJoapYfikaW1_0O8K8JMymJ2jg/a7ud6i_1nlU.jpg?size=1280x720&quality=95&sign=86f49bff0632d96a7110d198cd590b84&type=album", import.meta.url);
 const shmyakLay = new URL("https://sun9-51.userapi.com/impg/rxSY5cf5_8SLEQ7jd7fWDwHGK9_1ERyZ-KRrUg/e856HzFf0oc.jpg?size=1280x720&quality=95&sign=65b81c74b619ddbf1d65960be27108fe&type=album", import.meta.url);
@@ -30,7 +31,7 @@ const initialCards = [
 ];
 
 initialCards.forEach((element) => {
-    createCard(element.name, element.link);
+    addCard(createCard(element.name, element.link, openModal));
 })
 
 addButtonCard.addEventListener('click',() => openModal('.popup_type_new-card'))
@@ -47,8 +48,12 @@ profileFormElement.addEventListener('submit',function (evt)  {
 })
 
 cardFormElement.addEventListener('submit', function (evt){
-    createCard(handleCardAdd(evt).name, handleCardAdd(evt).src)
+    addCard(createCard(handleCardAdd(evt).name, handleCardAdd(evt).src, openModal, cardsContainer))
     closeModal(".popup_type_new-card")
     cardFormElement.reset();
 })
+
+function addCard(cardElement) {
+    cardsContainer.prepend(cardElement);
+}
 

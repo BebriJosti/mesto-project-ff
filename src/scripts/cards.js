@@ -1,7 +1,4 @@
-import {openModal} from "./modal";
-
 const cardTemplate = document.querySelector("#card-template").content;
-const cardsContainer = document.querySelector(".places__list");
 const cardName = document.querySelector('.popup__input_type_card-name')
 const cardSrc = document.querySelector('.popup__input_type_url')
 
@@ -15,7 +12,7 @@ export function handleCardLike(likeButton) {
      likeButton.classList.toggle('card__like-button_is-active')
 }
 
-export function createCard(name, link, isLiked) {
+export function createCard(name, link, openModal) {
   const cardElement = cardTemplate.querySelector(".card").cloneNode(true);
   const likeButton = cardElement.querySelector('.card__like-button')
   cardElement.querySelector(".card__title").textContent = name;
@@ -30,7 +27,7 @@ export function createCard(name, link, isLiked) {
   imagePopup.addEventListener('click', (event) =>
       openModal(".popup_type_image", event.target.currentSrc, event.target.alt))
 
-  cardsContainer.prepend(cardElement);
+  return(cardElement)
 }
 
 export function handleCardAdd(evt) {

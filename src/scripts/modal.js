@@ -2,13 +2,23 @@ const nameInput =  document.querySelector('.popup__input_type_name')
 const jobInput = document.querySelector('.popup__input_type_description')
 const profileTitle = document.querySelector('.profile__title')
 const profileDescription = document.querySelector('.profile__description')
+let escKeyPressHandler
+
+     function onEscKeyPress  (popupSelector) {
+     return function (event) {
+         if (event.key === 'Escape') {
+             console.log('popa')
+             closeModal(popupSelector);
+         }
+     };
+ }
 
 export function openModal(popupSelector, src, alt) {
     const popup = document.querySelector(popupSelector);
     if (popup) {
         if (popup.classList.contains('popup_type_image')) {
-            let popupImage = popup.querySelector('.popup__image')
-            popup.querySelector('.popup__caption').textContent = alt
+            const popupImage = popup.querySelector('.popup__image');
+            popup.querySelector('.popup__caption').textContent = alt;
             popupImage.src = src;
             popupImage.alt = alt;
         }
@@ -18,16 +28,10 @@ export function openModal(popupSelector, src, alt) {
         }
 
         popup.classList.add('popup_is-opened');
-        popup.classList.add('popup_is-animated')
+        popup.classList.add('popup_is-animated');
 
-        const onEscKeyPress = (event) => {
-            if (event.key === 'Escape') {
-                closeModal(popupSelector);
-                document.removeEventListener('keydown', onEscKeyPress);
-            }
-        };
-
-        document.addEventListener('keydown', onEscKeyPress);
+        escKeyPressHandler = onEscKeyPress(popupSelector);
+        document.addEventListener('keydown', escKeyPressHandler);
     } else {
         console.error(`Popup с селектором "${popupSelector}" не найден.`);
     }
@@ -36,11 +40,12 @@ export function openModal(popupSelector, src, alt) {
 export function closeModal(popupSelector) {
     const popup = document.querySelector(popupSelector);
     if (popup) {
-        popup.classList.remove('popup_is-opened');
-        popup.classList.add('popup_is-animated')
-        if (popup.querySelector('form'))
-            popup.querySelector('form').reset()
 
+        document.removeEventListener('keydown', escKeyPressHandler);
+        popup.classList.remove('popup_is-opened');
+        popup.classList.add('popup_is-animated');
+
+        if (popup.querySelector('form')) popup.querySelector('form').reset();
     } else {
         console.error(`Popup с селектором "${popupSelector}" не найден.`);
     }
@@ -54,7 +59,6 @@ document.addEventListener('click', (event) => {
 
 export function handleProfileEdit(evt) {
     evt.preventDefault();
-
 
     profileTitle.textContent = nameInput.value;
     profileDescription.textContent = jobInput.value;
