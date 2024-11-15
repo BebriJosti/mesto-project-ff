@@ -7,7 +7,6 @@ let escKeyPressHandler
      function onEscKeyPress  (popupSelector) {
      return function (event) {
          if (event.key === 'Escape') {
-             console.log('popa')
              closeModal(popupSelector);
          }
      };
