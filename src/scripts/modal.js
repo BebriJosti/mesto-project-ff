@@ -2,59 +2,60 @@ const nameInput =  document.querySelector('.popup__input_type_name')
 const jobInput = document.querySelector('.popup__input_type_description')
 const profileTitle = document.querySelector('.profile__title')
 const profileDescription = document.querySelector('.profile__description')
-let escKeyPressHandler
 
-     function onEscKeyPress  (popupSelector) {
-     return function (event) {
-         if (event.key === 'Escape') {
-             closeModal(popupSelector);
-         }
-     };
- }
-
-export function openModal(popupSelector, src, alt) {
-    const popup = document.querySelector(popupSelector);
+export function openModal(popup) {
     if (popup) {
-        if (popup.classList.contains('popup_type_image')) {
-            const popupImage = popup.querySelector('.popup__image');
-            popup.querySelector('.popup__caption').textContent = alt;
-            popupImage.src = src;
-            popupImage.alt = alt;
-        }
-        if (popup.querySelector('[name="edit-profile"]')) {
-            nameInput.value = profileTitle.textContent;
-            jobInput.value = profileDescription.textContent;
-        }
-
+        handleOutsideClick(popup)
+        handleEscKeyPress(popup)
         popup.classList.add('popup_is-opened');
         popup.classList.add('popup_is-animated');
 
-        escKeyPressHandler = onEscKeyPress(popupSelector);
-        document.addEventListener('keydown', escKeyPressHandler);
     } else {
-        console.error(`Popup с селектором "${popupSelector}" не найден.`);
+        console.error(`Popup "${popup}" не найден.`);
     }
 }
 
-export function closeModal(popupSelector) {
-    const popup = document.querySelector(popupSelector);
+export function closeModal(popup) {
     if (popup) {
-
-        document.removeEventListener('keydown', escKeyPressHandler);
-        popup.classList.remove('popup_is-opened');
         popup.classList.add('popup_is-animated');
+        popup.classList.remove('popup_is-opened');
+        popup.classList.remove('popup__image');
 
+        setTimeout(() => popup.classList.remove('popup_is-animated'), 500)
         if (popup.querySelector('form')) popup.querySelector('form').reset();
     } else {
-        console.error(`Popup с селектором "${popupSelector}" не найден.`);
+        console.error(`Popup с селектором "${popup}" не найден.`);
     }
 }
 
-document.addEventListener('click', (event) => {
-    if (event.target.classList.contains('popup_is-opened')) {
-        closeModal('.popup_is-opened');
-    }
-})
+function handleOutsideClick(popup) {
+    const outsideClickHandler = (event) => {
+        if (event.target === popup) {
+            closeModal(popup);
+        }
+    };
+
+    document.addEventListener('click', outsideClickHandler);
+
+    return () => {
+        document.removeEventListener('click', outsideClickHandler);
+    };
+}
+
+
+function handleEscKeyPress(popup) {
+    const escKeyPressHandler = (event) => {
+        if (event.key === 'Escape') {
+            closeModal(popup);
+        }
+    };
+
+    document.addEventListener('keydown', escKeyPressHandler);
+
+    return () => {
+        document.removeEventListener('keydown', escKeyPressHandler);
+    };
+}
 
 export function handleProfileEdit(evt) {
     evt.preventDefault();
@@ -64,5 +65,25 @@ export function handleProfileEdit(evt) {
 
     jobInput.textContent = jobInput.value;
     nameInput.textContent = nameInput.value;
+//закрытие модалки в индекс 51 чтобы обойтись без лишнего прокидывания и нагрузки памяти
 }
 
+export function openChangeProfileModal(profileEl) {
+    nameInput.value = profileTitle.textContent;
+    jobInput.value = profileDescription.textContent;
+    openModal(profileEl)
+}
+
+export function openAddCardModal(addCardEl) {
+    openModal(addCardEl)
+}
+
+export function openPhoto(photoEl, name, src) {
+    const popupImage = photoEl.querySelector('img')
+    photoEl.classList.add('popup__image')
+    photoEl.querySelector('.popup__caption').textContent = name;
+    popupImage.src = src;
+    popupImage.alt = name;
+
+    openModal(photoEl)
+}

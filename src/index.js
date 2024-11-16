@@ -1,17 +1,20 @@
 import './pages/index.css';
 import {createCard, handleCardAdd} from "./scripts/cards";
-import {openModal, closeModal, handleProfileEdit} from "./scripts/modal";
-
-const cardFormElement = document.querySelector('[name = "new-place"]')
-const profileFormElement = document.querySelector('[name = "edit-profile"]')
+import {openAddCardModal, openChangeProfileModal, openPhoto, openModal, closeModal, handleProfileEdit} from "./scripts/modal";
+// Поиск попапов
+const popupAddCard = document.querySelector('.popup_type_new-card');
+const popupProfile = document.querySelector('.popup_type_edit');
+const popupPhoto = document.querySelector(".popup_type_image")
+//Поиск кнопок
 const addButtonCard = document.querySelector(".profile__add-button")
+const editButtonProfile = document.querySelector(".profile__edit-button")
 const closeButtonInNewCard = document.querySelector(".popup_type_new-card")
     .querySelector(".popup__close")
-const addButtonProfile = document.querySelector(".profile__edit-button")
 const closeButtonProfile = document.querySelector(".popup_type_edit")
     .querySelector(".popup__close")
 const imagePopupCloseButton = document.querySelector(".popup_type_image")
     .querySelector(".popup__close")
+
 const cardsContainer = document.querySelector(".places__list");
 
 const shmyakLook = new URL("https://sun9-51.userapi.com/impg/haxjW5n4gNhRTJoapYfikaW1_0O8K8JMymJ2jg/a7ud6i_1nlU.jpg?size=1280x720&quality=95&sign=86f49bff0632d96a7110d198cd590b84&type=album", import.meta.url);
@@ -22,35 +25,35 @@ const shmyakHappy = new URL("https://sun9-13.userapi.com/impg/FDKoyFvrtYEWHvOChG
 const shmyakNotHappy = new URL("https://sun9-56.userapi.com/impg/d-mW3d6L00q5E2dKJWf_o5BCo0dPQ8gNCsNcQA/rYaKD4NEibA.jpg?size=607x1080&quality=95&sign=84c1e418b89eac925551053001567d50&type=album", import.meta.url);
 
 const initialCards = [
-    { name: "Шмяк лежит", link: shmyakLay, },
-    { name: "Шмяк глядит", link: shmyakLook, },
-    { name: "Шмяк намекает", link: shmyakHints, },
-    { name: "Шмяк нюхает", link: shmyakSniffs, },
-    { name: "Шмяк торчит",  link: shmyakHappy, },
     { name: "Шмяк негодует", link: shmyakNotHappy,},
+    { name: "Шмяк торчит", link: shmyakHappy, },
+    { name: "Шмяк нюхает", link: shmyakSniffs, },
+    { name: "Шмяк намекает", link: shmyakHints, },
+    { name: "Шмяк глядит", link: shmyakLook, },
+    { name: "Шмяк лежит", link: shmyakLay, },
 ];
 
 initialCards.forEach((element) => {
-    addCard(createCard(element.name, element.link, openModal));
+    addCard(createCard(element.name, element.link, openPhoto, popupPhoto));
 })
 
-addButtonCard.addEventListener('click',() => openModal('.popup_type_new-card'))
-closeButtonInNewCard.addEventListener('click', () => closeModal('.popup_type_new-card'))
+addButtonCard.addEventListener('click',() => openAddCardModal(popupAddCard))
 
-addButtonProfile.addEventListener('click', () => openModal(".popup_type_edit"))
-closeButtonProfile.addEventListener('click', () => closeModal(".popup_type_edit"))
+editButtonProfile.addEventListener('click', () => openChangeProfileModal(popupProfile))
 
-imagePopupCloseButton.addEventListener('click', () => closeModal(".popup_type_image"))
+closeButtonInNewCard.addEventListener('click', () => closeModal(popupAddCard))
+closeButtonProfile.addEventListener('click', () => closeModal(popupProfile))
 
-profileFormElement.addEventListener('submit',function (evt)  {
+imagePopupCloseButton.addEventListener('click', () => closeModal(popupPhoto))
+
+popupProfile.querySelector('form').addEventListener('submit',function (evt)  {
     handleProfileEdit(evt)
-    closeModal(".popup_type_edit")
+    closeModal(popupProfile)
 })
 
-cardFormElement.addEventListener('submit', function (evt){
-    addCard(createCard(handleCardAdd(evt).name, handleCardAdd(evt).src, openModal, cardsContainer))
-    closeModal(".popup_type_new-card")
-    cardFormElement.reset();
+popupAddCard.querySelector('form').addEventListener('submit', function (evt){
+    addCard(createCard(handleCardAdd(evt).name, handleCardAdd(evt).src, openPhoto, popupPhoto))
+    closeModal(popupAddCard)
 })
 
 function addCard(cardElement) {
