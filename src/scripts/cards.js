@@ -1,6 +1,4 @@
 const cardTemplate = document.querySelector("#card-template").content;
-const cardName = document.querySelector('.popup__input_type_card-name')
-const cardSrc = document.querySelector('.popup__input_type_url')
 
 export function removeCard(evt) {
     const card = evt.target.closest(".card");
@@ -30,10 +28,7 @@ export function createCard(name, link, openPhoto, popupPhoto) {
     return(cardElement)
 }
 
-export function handleCardAdd(evt) {
-    evt.preventDefault();
-    return({name: cardName.value, src: cardSrc.value});
-}
+
 
 
 

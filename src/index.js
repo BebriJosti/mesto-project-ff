@@ -1,6 +1,6 @@
 import './pages/index.css';
-import {createCard, handleCardAdd} from "./scripts/cards";
-import {openAddCardModal, openChangeProfileModal, openPhoto, openModal, closeModal, handleProfileEdit} from "./scripts/modal";
+import {createCard} from "./scripts/cards";
+import { openModal, closeModal} from "./scripts/modal";
 // Поиск попапов
 const popupAddCard = document.querySelector('.popup_type_new-card');
 const popupProfile = document.querySelector('.popup_type_edit');
@@ -16,6 +16,10 @@ const imagePopupCloseButton = document.querySelector(".popup_type_image")
     .querySelector(".popup__close")
 
 const cardsContainer = document.querySelector(".places__list");
+const nameInput =  document.querySelector('.popup__input_type_name')
+const jobInput = document.querySelector('.popup__input_type_description')
+const profileTitle = document.querySelector('.profile__title')
+const profileDescription = document.querySelector('.profile__description')
 
 const shmyakLook = new URL("https://sun9-51.userapi.com/impg/haxjW5n4gNhRTJoapYfikaW1_0O8K8JMymJ2jg/a7ud6i_1nlU.jpg?size=1280x720&quality=95&sign=86f49bff0632d96a7110d198cd590b84&type=album", import.meta.url);
 const shmyakLay = new URL("https://sun9-51.userapi.com/impg/rxSY5cf5_8SLEQ7jd7fWDwHGK9_1ERyZ-KRrUg/e856HzFf0oc.jpg?size=1280x720&quality=95&sign=65b81c74b619ddbf1d65960be27108fe&type=album", import.meta.url);
@@ -60,3 +64,38 @@ function addCard(cardElement) {
     cardsContainer.prepend(cardElement);
 }
 
+function handleCardAdd(evt) {
+    const cardName = evt.target.querySelector('.popup__input_type_card-name')
+    const cardSrc = evt.target.querySelector('.popup__input_type_url')
+    evt.preventDefault();
+     return({name: cardName.value, src: cardSrc.value});
+}
+
+function handleProfileEdit(evt) {
+    evt.preventDefault();
+    profileTitle.textContent = nameInput.value;
+    profileDescription.textContent = jobInput.value;
+
+    jobInput.textContent = jobInput.value;
+    nameInput.textContent = nameInput.value;
+}
+
+function openChangeProfileModal(profileEl) {
+    nameInput.value = profileTitle.textContent;
+    jobInput.value = profileDescription.textContent;
+    openModal(profileEl)
+}
+
+function openAddCardModal(addCardEl) {
+    addCardEl.querySelector('form').reset();
+    openModal(addCardEl)
+}
+
+function openPhoto(photoEl, name, src) {
+    const popupImage = photoEl.querySelector('img')
+    photoEl.querySelector('.popup__caption').textContent = name;
+    popupImage.src = src;
+    popupImage.alt = name;
+
+    openModal(photoEl)
+}
