@@ -1,6 +1,7 @@
 import './pages/index.css';
 import {createCard} from "./scripts/cards";
 import { openModal, closeModal} from "./scripts/modal";
+import {enableValidation, clearValidation} from "./scripts/validation"
 // Поиск попапов
 const popupAddCard = document.querySelector('.popup_type_new-card');
 const popupProfile = document.querySelector('.popup_type_edit');
@@ -37,11 +38,22 @@ const initialCards = [
     { name: "Шмяк лежит", link: shmyakLay, },
 ];
 
+ const popupSelectors = {
+    formSelector: ".popup__form",
+    inputSelector: ".popup__input",
+    submitButton: ".popup__button",
+    inactiveButton: "popup__button-disabled",
+    inputError: "popup__input_type-error",
+};
+
 initialCards.forEach((element) => {
     addCard(createCard(element.name, element.link, openPhoto, popupPhoto));
 })
 
-addButtonCard.addEventListener('click',() => openAddCardModal(popupAddCard))
+addButtonCard.addEventListener('click', function() {
+    openAddCardModal(popupAddCard);
+     clearValidation(popupAddCard, popupSelectors)
+});
 
 editButtonProfile.addEventListener('click', () => openChangeProfileModal(popupProfile))
 
@@ -68,7 +80,7 @@ function handleCardAdd(evt) {
     const cardName = evt.target.querySelector('.popup__input_type_card-name')
     const cardSrc = evt.target.querySelector('.popup__input_type_url')
     evt.preventDefault();
-     return({name: cardName.value, src: cardSrc.value});
+    return({name: cardName.value, src: cardSrc.value});
 }
 
 function handleProfileEdit(evt) {
@@ -84,6 +96,7 @@ function openChangeProfileModal(profileEl) {
     nameInput.value = profileTitle.textContent;
     jobInput.value = profileDescription.textContent;
     openModal(profileEl)
+    clearValidation(profileEl, popupSelectors)
 }
 
 function openAddCardModal(addCardEl) {
@@ -99,3 +112,7 @@ function openPhoto(photoEl, name, src) {
 
     openModal(photoEl)
 }
+
+enableValidation(popupSelectors);
+
+
