@@ -20,14 +20,13 @@
   </header>
   <main class="content">
     <section class="profile page__section">
-      <div
-              class="profile__image"
-              style="background-image: url('<%= require('./images/avatar.jpg') %>')"
-      ></div>
+      <div class="profile__image">
+        <button class="profile__image__edit-button"></button>
+      </div>
       <div class="profile__info">
-        <h1 class="profile__title">Аътём</h1>
+        <h1 class="profile__title">Имя профиля</h1>
         <button class="profile__edit-button" type="button"></button>
-        <p class="profile__description">Счастливый обладатель Шмяка</p>
+        <p class="profile__description">Описание профиля</p>
       </div>
       <button class="profile__add-button" type="button"></button>
     </section>
@@ -53,7 +52,7 @@
                 minlength="2"
                 maxlength="40"
                 pattern="^[a-zA-Zа-яА-ЯёЁъ\-\s]+$"
-                data-error-message="Поля могут содержать только латинские и кириллические буквы, знаки дефиса и пробелы"
+                data-error-message="Разрешены только латинские, кириллические буквы, знаки дефиса и пробелы"
                 required
         />
         <span class="popup__error-text input-name-error"></span>
@@ -68,12 +67,12 @@
                 minlength="2"
                 maxlength="200"
                 pattern="^[a-zA-Zа-яА-ЯёЁъ\-\s]+$"
-                data-error-message="Поля могут содержать только латинские и кириллические буквы, знаки дефиса и пробелы"
+                data-error-message="Разрешены только латинские, кириллические буквы, знаки дефиса и пробелы"
                 required
         />
         <span class="popup__error-text input-description-error"></span>
         </label>
-        <button type="submit" class="button popup__button">
+        <button type="submit" class="button popup__button ">
           Сохранить
         </button>
       </form>
@@ -94,7 +93,7 @@
                 minlength="2"
                 maxlength="30"
                 pattern="^[a-zA-Zа-яА-ЯёЁъ\-\s]+$"
-                data-error-message="Поля могут содержать только латинские и кириллические буквы, знаки дефиса и пробелы"
+                data-error-message="Разрешены только латинские, кириллические буквы, знаки дефиса и пробелы"
                 required
         />
         <span class="popup__error-text input-place-name-error"></span>
@@ -106,7 +105,7 @@
                 name="link"
                 class="popup__input popup__input_type_url"
                 placeholder="Ссылка на картинку"
-                data-error-message="Поля могут содержать только латинские и кириллические буквы, знаки дефиса и пробелы"
+                data-error-message="Введите ссылку на картинку"
                 required
         />
         <span class="popup__error-text input-url-error"></span>
@@ -126,19 +125,46 @@
   </div>
 </div>
 
+<div class="popup popup_type_avatar-edit">
+  <div class="popup__content popup__content_avatar">
+    <button type="button" class="popup__close"></button>
+
+    <h3 class="popup__title">Обновить аватар</h3>
+
+    <form class="popup__form" name="new-avatar" novalidate>
+      <label>
+      <input
+              id="avatar-input"
+              type="url"
+              name="link"
+              class="popup__input popup__input_type_url"
+              placeholder="Ссылка на картинку"
+              data-error-message="Введите ссылку на картинку"
+              required
+      />
+
+      <span class="avatar-input-error popup__error-text"></span>
+      </label>
+      <button type="submit" class="button popup__button">Сохранить</button>
+    </form>
+  </div>
+</div>
+
 <template id="card-template">
   <li class="places__item card">
     <img class="card__image" src="" alt="" />
     <button type="button" class="card__delete-button"></button>
     <div class="card__description">
       <h2 class="card__title"></h2>
+      <div class="like_count">
       <button type="button" class="card__like-button"></button>
+      <p class="like_counter"></p>
+        </div>
     </div>
   </li>
 </template>
 </body>
 
 
-
-
 </html>
+
