@@ -126,7 +126,6 @@ function openAddCardModal(addCardEl) {
 }
 
 export function openPhoto(card) {
-    console.log(popupPhoto)
     popupImage.src = card.link
     popupImage.alt = card.name
     popupCaption.textContent = card.name
