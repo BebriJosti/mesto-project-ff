@@ -5,9 +5,12 @@ import {enableValidation, clearValidation} from "./scripts/validation"
 import {addDataCard, editDataAvatar, editProfile, getCards, getProfile} from "./scripts/api";
 
 // Поиск попапов
+const popup = document.querySelector(".popup")
 const popupAddCard = document.querySelector('.popup_type_new-card')
 const popupProfile = document.querySelector('.popup_type_edit')
 const popupPhoto = document.querySelector(".popup_type_image")
+const popupImage = popupPhoto.querySelector(".popup__image")
+const popupCaption = popupPhoto.querySelector(".popup__caption");
 //Поиск кнопок
 const addButtonCard = document.querySelector(".profile__add-button")
 const editButtonProfile = document.querySelector(".profile__edit-button")
@@ -19,6 +22,8 @@ const imagePopupCloseButton = document.querySelector(".popup_type_image")
     .querySelector(".popup__close")
 const avatarPopupCloseButton = document.querySelector(".popup_type_avatar-edit")
     .querySelector(".popup__close")
+const popupInputUrl = document.querySelector(".popup__input_type_url")
+const popupImageName = document.querySelector(".popup__input_type_card-name")
 
 const cardsContainer = document.querySelector(".places__list");
 const nameInput =  document.querySelector('.popup__input_type_name')
@@ -29,6 +34,7 @@ const profileAvatar = document.querySelector('.profile__image')
 const editAvatarButton = document.querySelector(".profile__image__edit-button")
 const editAvatarPopup = document.querySelector(".popup_type_avatar-edit");
 let userId = null;
+
 
 Promise.all([getProfile(), getCards()])
     .then(([profileInfo, initialCards]) => {
@@ -46,6 +52,7 @@ Promise.all([getProfile(), getCards()])
     submitButton: ".popup__button",
     inactiveButton: "popup__button-disabled",
     inputError: "popup__input_type-error",
+    errorClass : "popup__error-text"
 };
 
 // навешивание слушателей событий
@@ -62,22 +69,36 @@ closeButtonInNewCard.addEventListener('click', () => closeModal(popupAddCard))
 closeButtonProfile.addEventListener('click', () => closeModal(popupProfile))
 imagePopupCloseButton.addEventListener('click', () => closeModal(popupPhoto))
 avatarPopupCloseButton.addEventListener('click', () =>closeModal(editAvatarPopup) )
+// popup.addEventListener('click', handlerOutsideClick);
 
 popupProfile.querySelector('form').addEventListener('submit',function (evt)  {
     handleProfileEdit(evt)
-    closeModal(popupProfile)
+
 })
+
+function handleProfileEdit(evt) {
+    evt.preventDefault();
+    popupProfile.querySelector('.popup__button ').textContent ='Сохранение...'
+    editProfile(nameInput.value, jobInput.value)
+        .then((res) => {
+            profileTitle.textContent = res.name;
+            profileDescription.textContent = res.about;
+            closeModal(popupProfile)
+        })
+        .catch((err) => alert("Статус ошибки:" + err.status))
+        .finally(() => popupProfile.querySelector('.popup__button ').textContent ='Сохранить')
+}
 
 popupAddCard.querySelector('form').addEventListener('submit', function (evt){
     popupAddCard.querySelector('.popup__button ').textContent ='Сохранение...'
     addDataCard(handleCardAdd(evt).name, handleCardAdd(evt).src)
         .then((card) => {
-        addCard(createCard(card, openPhoto, popupPhoto, true))
-            popupAddCard.querySelector('.popup__button ').textContent ='Сохранить'
+        addCard(createCard(card, openPhoto, userId))
         closeModal(popupAddCard)
         }
     )
         .catch((err) => alert("Статус ошибки:" + err.status))
+        .finally(() => popupAddCard.querySelector('.popup__button ').textContent ='Сохранить')
 })
 
 // функции добавления и изменения
@@ -86,26 +107,10 @@ function addCard(cardElement) {
 }
 
 function handleCardAdd(evt) {
-    const cardName = evt.target.querySelector('.popup__input_type_card-name')
-    const cardSrc = evt.target.querySelector('.popup__input_type_url')
+    const cardName = popupImageName
+    const cardSrc = popupInputUrl
     evt.preventDefault();
     return({name: cardName.value, src: cardSrc.value});
-}
-
-function handleProfileEdit(evt) {
-    evt.preventDefault();
-    popupProfile.querySelector('.popup__button ').textContent ='Сохранение...'
-    editProfile(nameInput.value, jobInput.value)
-        .then(() => {
-        profileTitle.textContent = nameInput.value;
-        profileDescription.textContent = jobInput.value;
-
-        jobInput.textContent = jobInput.value;
-        nameInput.textContent = nameInput.value;
-
-        popupProfile.querySelector('.popup__button ').textContent ='Сохранить'
-    })
-        .catch((err) => alert("Статус ошибки:" + err.status))
 }
 
 function openChangeProfileModal(profileEl) {
@@ -120,13 +125,12 @@ function openAddCardModal(addCardEl) {
     openModal(addCardEl)
 }
 
-function openPhoto(photoEl, name, src) {
-    const popupImage = photoEl.querySelector('img')
-    photoEl.querySelector('.popup__caption').textContent = name;
-    popupImage.src = src;
-    popupImage.alt = name;
-
-    openModal(photoEl)
+export function openPhoto(card) {
+    console.log(popupPhoto)
+    popupImage.src = card.link
+    popupImage.alt = card.name
+    popupCaption.textContent = card.name
+    openModal(popupPhoto)
 }
 // функции api
 
@@ -136,10 +140,8 @@ function setProfile (profileAvatar, profileTitle, profileDescription, profileInf
     profileAvatar.style.backgroundImage = `url(${profileInfo.avatar})`;
 }
 function setCards(cards, id) {
-    let isMyCard = false;
     cards.forEach((card) => {
-      isMyCard = id === card.owner._id
-        const dataCard = createCard(card, openPhoto, popupPhoto, isMyCard, id) ;
+        const dataCard = createCard(card,openPhoto, id) ;
         cardsContainer.append(dataCard);
     });
 }
@@ -155,15 +157,16 @@ editAvatarButton.addEventListener("click", () => {
 });
 
 editAvatarPopup.querySelector('form').addEventListener('submit', function (evt){
+    evt.preventDefault()
     editAvatarPopup.querySelector('.popup__button ').textContent ='Сохранение...'
     editDataAvatar(evt.target[0].value)
         .then((res) => {
                 profileAvatar.style.backgroundImage = `url(${res.avatar})`
-                editAvatarPopup.querySelector('.popup__button ').textContent ='Сохранить'
                 closeModal(editAvatarPopup)
             }
         )
         .catch((err) => alert("Статус ошибки:" + err.status))
+        .finally(()=> editAvatarPopup.querySelector('.popup__button ').textContent ='Сохранить')
 })
 
 //валидация

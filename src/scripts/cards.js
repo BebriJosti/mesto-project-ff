@@ -8,16 +8,18 @@ function removeCard(evt, cardId) {
         .catch((err) => alert("Статус ошибки:"+ (err)))
 }
 
-export function createCard(card, openPhoto, popupPhoto, isMyCard, id) {
+export function createCard(card,openPhoto, id) {
     const cardElement = cardTemplate.querySelector(".card").cloneNode(true);
     const likeButton = cardElement.querySelector('.card__like-button')
-    const deleteButton = cardElement.querySelector(".card__delete-button");
+    const deleteButton = cardElement.querySelector(".card__delete-button")
     const imagePopup = cardElement.querySelector(".card__image")
     const likeCounter = cardElement.querySelector(".like_counter")
 
     cardElement.querySelector(".card__title").textContent = card.name;
     cardElement.querySelector(".card__image").src = card.link;
     cardElement.querySelector('.card__image').alt = card.name;
+
+    let isMyCard = id === card.owner._id
 
     if (!isMyCard){
         deleteButton.style.visibility = 'hidden'
@@ -33,7 +35,7 @@ export function createCard(card, openPhoto, popupPhoto, isMyCard, id) {
 
     likeButton.addEventListener('click',(evt) => likeCard(evt, card._id ,likeButton, likeCounter));
 
-    imagePopup.addEventListener('click', () => openPhoto(popupPhoto ,card.name , card.link))
+    imagePopup.addEventListener('click', () => openPhoto(card))
 
     return(cardElement)
 }
