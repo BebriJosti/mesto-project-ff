@@ -4,37 +4,28 @@ import { openModal, closeModal} from "./scripts/modal";
 import {enableValidation, clearValidation} from "./scripts/validation"
 import {addDataCard, editDataAvatar, editProfile, getCards, getProfile} from "./scripts/api";
 
-// Поиск попапов
-const popup = document.querySelector(".popup")
+const popups = document.querySelectorAll('.popup')
 const popupAddCard = document.querySelector('.popup_type_new-card')
 const popupProfile = document.querySelector('.popup_type_edit')
 const popupPhoto = document.querySelector(".popup_type_image")
 const popupImage = popupPhoto.querySelector(".popup__image")
-const popupCaption = popupPhoto.querySelector(".popup__caption");
-//Поиск кнопок
+const popupCaption = popupPhoto.querySelector(".popup__caption")
+
 const addButtonCard = document.querySelector(".profile__add-button")
 const editButtonProfile = document.querySelector(".profile__edit-button")
-const closeButtonInNewCard = document.querySelector(".popup_type_new-card")
-    .querySelector(".popup__close")
-const closeButtonProfile = document.querySelector(".popup_type_edit")
-    .querySelector(".popup__close")
-const imagePopupCloseButton = document.querySelector(".popup_type_image")
-    .querySelector(".popup__close")
-const avatarPopupCloseButton = document.querySelector(".popup_type_avatar-edit")
-    .querySelector(".popup__close")
 const popupInputUrl = document.querySelector(".popup__input_type_url")
 const popupImageName = document.querySelector(".popup__input_type_card-name")
 
-const cardsContainer = document.querySelector(".places__list");
+const cardsContainer = document.querySelector(".places__list")
 const nameInput =  document.querySelector('.popup__input_type_name')
 const jobInput = document.querySelector('.popup__input_type_description')
 const profileTitle = document.querySelector('.profile__title')
 const profileDescription = document.querySelector('.profile__description')
 const profileAvatar = document.querySelector('.profile__image')
 const editAvatarButton = document.querySelector(".profile__image__edit-button")
-const editAvatarPopup = document.querySelector(".popup_type_avatar-edit");
-let userId = null;
+const editAvatarPopup = document.querySelector(".popup_type_avatar-edit")
 
+let userId = null
 
 Promise.all([getProfile(), getCards()])
     .then(([profileInfo, initialCards]) => {
@@ -55,8 +46,12 @@ Promise.all([getProfile(), getCards()])
     errorClass : "popup__error-text"
 };
 
-// навешивание слушателей событий
-addButtonCard.addEventListener('click', function() {
+editAvatarButton.addEventListener("click", () => {
+    handleOpenAvatarPopup()
+    clearValidation(editAvatarPopup, popupSelectors)
+});
+
+addButtonCard.addEventListener('click', () => {
     openAddCardModal(popupAddCard);
      clearValidation(popupAddCard, popupSelectors)
 });
@@ -64,53 +59,26 @@ addButtonCard.addEventListener('click', function() {
 editButtonProfile.addEventListener('click', () => {
     openChangeProfileModal(popupProfile)
 })
-// кнопки закрытия модального окна
-closeButtonInNewCard.addEventListener('click', () => closeModal(popupAddCard))
-closeButtonProfile.addEventListener('click', () => closeModal(popupProfile))
-imagePopupCloseButton.addEventListener('click', () => closeModal(popupPhoto))
-avatarPopupCloseButton.addEventListener('click', () =>closeModal(editAvatarPopup) )
-// popup.addEventListener('click', handlerOutsideClick);
+// закрытие модалки
 
-popupProfile.querySelector('form').addEventListener('submit',function (evt)  {
-    handleProfileEdit(evt)
-
-})
-
-function handleProfileEdit(evt) {
-    evt.preventDefault();
-    popupProfile.querySelector('.popup__button ').textContent ='Сохранение...'
-    editProfile(nameInput.value, jobInput.value)
-        .then((res) => {
-            profileTitle.textContent = res.name;
-            profileDescription.textContent = res.about;
-            closeModal(popupProfile)
-        })
-        .catch((err) => alert("Статус ошибки:" + err.status))
-        .finally(() => popupProfile.querySelector('.popup__button ').textContent ='Сохранить')
-}
-
-popupAddCard.querySelector('form').addEventListener('submit', function (evt){
-    popupAddCard.querySelector('.popup__button ').textContent ='Сохранение...'
-    addDataCard(handleCardAdd(evt).name, handleCardAdd(evt).src)
-        .then((card) => {
-        addCard(createCard(card, openPhoto, userId))
-        closeModal(popupAddCard)
+popups.forEach((popup) => {
+    const closeButton = popup.querySelector('.popup__close')
+    closeButton.addEventListener('click', () => closeModal(popup))
+    popup.addEventListener('mousedown', (evt) => {
+        if (evt.target === evt.currentTarget) {
+            closeModal(popup);
         }
-    )
-        .catch((err) => alert("Статус ошибки:" + err.status))
-        .finally(() => popupAddCard.querySelector('.popup__button ').textContent ='Сохранить')
-})
+    })
+    popup.classList.add('popup_is-animated');
+});
 
-// функции добавления и изменения
 function addCard(cardElement) {
     cardsContainer.prepend(cardElement);
 }
 
-function handleCardAdd(evt) {
-    const cardName = popupImageName
-    const cardSrc = popupInputUrl
-    evt.preventDefault();
-    return({name: cardName.value, src: cardSrc.value});
+function handleOpenAvatarPopup() {
+    editAvatarPopup.querySelector('form').reset();
+    openModal(editAvatarPopup);
 }
 
 function openChangeProfileModal(profileEl) {
@@ -131,7 +99,6 @@ export function openPhoto(card) {
     popupCaption.textContent = card.name
     openModal(popupPhoto)
 }
-// функции api
 
 function setProfile (profileAvatar, profileTitle, profileDescription, profileInfo) {
     profileTitle.textContent = profileInfo.name;
@@ -145,19 +112,9 @@ function setCards(cards, id) {
     });
 }
 
-function handleOpenAvatarPopup() {
-    editAvatarPopup.querySelector('form').reset();
-    openModal(editAvatarPopup);
-}
-
-editAvatarButton.addEventListener("click", () => {
-    handleOpenAvatarPopup()
-    clearValidation(editAvatarPopup, popupSelectors)
-});
-
 editAvatarPopup.querySelector('form').addEventListener('submit', function (evt){
     evt.preventDefault()
-    editAvatarPopup.querySelector('.popup__button ').textContent ='Сохранение...'
+    evt.submitter.textContent ='Сохранение...'
     editDataAvatar(evt.target[0].value)
         .then((res) => {
                 profileAvatar.style.backgroundImage = `url(${res.avatar})`
@@ -165,7 +122,33 @@ editAvatarPopup.querySelector('form').addEventListener('submit', function (evt){
             }
         )
         .catch((err) => alert("Статус ошибки:" + err.status))
-        .finally(()=> editAvatarPopup.querySelector('.popup__button ').textContent ='Сохранить')
+        .finally(()=> evt.submitter.textContent ='Сохранить')
+})
+
+popupAddCard.querySelector('form').addEventListener('submit', function (evt){
+    evt.preventDefault()
+    evt.submitter.textContent ='Сохранение...'
+    addDataCard(popupImageName.value, popupInputUrl.value)
+        .then((card) => {
+                addCard(createCard(card, openPhoto, userId))
+                closeModal(popupAddCard)
+            }
+        )
+        .catch((err) => alert("Статус ошибки:" + err.status))
+        .finally(() => evt.submitter.textContent ='Создать')
+})
+
+popupProfile.querySelector('form').addEventListener('submit',function (evt)  {
+    evt.preventDefault();
+    evt.submitter.textContent ='Сохранение...'
+    editProfile(nameInput.value, jobInput.value)
+        .then((res) => {
+            profileTitle.textContent = res.name;
+            profileDescription.textContent = res.about;
+            closeModal(popupProfile)
+        })
+        .catch((err) => alert("Статус ошибки:" + err.status))
+        .finally(() => evt.submitter.textContent ='Сохранить')
 })
 
 //валидация
