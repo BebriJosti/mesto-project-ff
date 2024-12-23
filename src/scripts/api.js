@@ -1,26 +1,26 @@
-// const BASE_URL = "https://mesto.nomoreparties.co/v1/wff-cohort-28"
-// const token = "0c437466-6d88-4853-b6df-3060be036c4e"
-//
-// export function handleResponse(res) {
-//     if (res.ok) {
-//         return res.json()
-//     }
-//     return Promise.reject(res)
-// }
-//
-// function sendRequestApi(path, method = "GET", body = null) {
-//     const params = {
-//         method: method,
-//         headers: {
-//             authorization: token,
-//             'Content-Type': 'application/json'
-//         },
-//     };
-//     if (body) {
-//         params.body = JSON.stringify(body)
-//     }
-//     return fetch(`${BASE_URL}/${path}`, params).then(handleResponse)
-// }
+const BASE_URL = "https://mesto.nomoreparties.co/v1/wff-cohort-28"
+const token = "0c437466-6d88-4853-b6df-3060be036c4e"
+
+export function handleResponse(res) {
+    if (res.ok) {
+        return res.json()
+    }
+    return Promise.reject(res)
+}
+
+function sendRequestApi(path, method = "GET", body = null) {
+    const params = {
+        method: method,
+        headers: {
+            authorization: token,
+            'Content-Type': 'application/json'
+        },
+    };
+    if (body) {
+        params.body = JSON.stringify(body)
+    }
+    return fetch(`${BASE_URL}/${path}`, params).then(handleResponse)
+}
 
 export function getProfile() {
     return sendRequestApi("users/me")
