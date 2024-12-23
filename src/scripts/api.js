@@ -1,4 +1,4 @@
-const BASE_URL = "https://mesto.nomoreparties.co/v1/wff-cohort-28"
+// const BASE_URL = "https://mesto.nomoreparties.co/v1/wff-cohort-28"
 const token = "0c437466-6d88-4853-b6df-3060be036c4e"
 
 export function handleResponse(res) {
